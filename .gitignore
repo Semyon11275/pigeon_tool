@@ -1,0 +1,7 @@
+node_modules/
+release/
+shots/
+_stage/
+*.log
+app.asar
+app.asar.unpacked/
