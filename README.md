@@ -1,125 +1,110 @@
-# Pigeon 🕊️
+# Pigeon · pigeon_tool
 
-一个为自己打造的素材收集与管理工具，复刻 [Eagle](https://eagle.cool) 的核心体验。
-**兼容 Eagle 资料库格式**，可以直接导入现有的 `.library` 继续用。
+**一款仍在测试中的设计资源收集与管理软件，可完全离线运行。**
 
-> 当前归档版本为 **v0.8.0 demo（fix3）**。源码已与 2026-09-20 的 Windows 成品对齐，包含首次启动新建资料库的修复。
+Pigeon 用来收集、浏览和整理图片、视频、字体等设计素材，支持文件夹、标签、评分、搜索，以及可选的本地 AI 识图。当前版本为 **v0.8.0 demo（fix3）**，主要面向 Windows x64。
 
-![技术栈](https://img.shields.io/badge/Electron-33-blue) ![平台](https://img.shields.io/badge/Windows-x64-green)
+> 项目仍在测试和完善中，可能存在功能缺陷。建议先使用少量素材试用，并为重要资料库保留备份。
 
-## 便携版（绿色版）
+## 离线运行
 
-Windows 成品的 `Pigeon` 文件夹即为便携版（本仓库仅包含源码），结构：
+本地素材的导入、浏览、整理、搜索，以及配置好模型后的 AI 识图与语义搜索，都在本机完成，不依赖云端 AI 服务或在线账户，可完全离线使用。
 
-```
-Pigeon\                       ← 整个文件夹可随意移动 / 拷进 U 盘
-├── pigeon.exe                ← 双击运行，无任何外部依赖
-└── data\                    ← 全部数据都在这里
-    ├── userdata\            # 配置与缓存（不再写入 C:\Users\...\AppData）
-    └── libraries\
-        └── 素材.pigeon       # 你的资料库（相对路径引用）
-```
+网页图片采集、URL 导入和内置浏览器访问网络资源时需要联网；从源码首次安装依赖也通常需要联网。它们不影响已有本地素材的离线管理。
 
-- **移动即迁移**：库路径以相对形式（`libraries/素材.pigeon`）记录，把整个文件夹拷到别的电脑、别的盘符，双击即用，素材、标签、评分全部跟走
-- **更新方式**：用新版文件覆盖 pigeon.exe 和 `resources\`，**保留 `data\` 文件夹**即可
-- 开发/源码模式不启用便携逻辑（`app.isPackaged` 判定），行为不变
+## 主要功能
 
-## 运行
+| 功能 | 说明 |
+| --- | --- |
+| 素材收集 | 文件导入、拖放导入、剪贴板导入；可选的网页图片采集 |
+| 资料库 | 多资料库切换，支持导入 Eagle `.library` 资料库 |
+| 分类整理 | 嵌套文件夹、标签、评分、注释、星标、智能文件夹 |
+| 浏览预览 | 瀑布流、网格、列表；图片预览、视频播放、字体预览 |
+| 搜索筛选 | 关键词与拼音搜索，按格式、颜色、日期、评分等筛选 |
+| 批量处理 | 批量重命名、批量标签、重复文件扫描、相似图片查找 |
+| 导出 | 导出素材到文件夹，导出 CSV |
+| 本地 AI（可选） | Chinese-CLIP ONNX 模型支持的识图、自动打标和语义搜索 |
+| 实验功能 | 截图收集、自动导入文件夹监听、全局快捷键 |
 
-```bash
-npm install     # 首次
-npm start       # 启动
-```
+## 空间不够？可以删除识图模型
 
-开发自检（自动截图到 shots/）：
+**识图模型是可选组件。如果软件占用空间过大，且暂时不需要 AI 功能，可以自行删除模型文件。**
 
-```bash
-PIGEON_SHOT=1 npx electron .
-```
+1. 在设置中关闭 AI 功能，然后退出 Pigeon。
+2. 在便携版程序目录下找到 `data/models/`，删除其中的 `visual.onnx` 和 `text.onnx`。如果还保留了 `clip_cn_rn50.pt` 原始权重，也可以删除。
+3. 重新启动软件，继续使用普通素材管理功能。
 
-图标：`build/icon-source.png` → `node scripts/make-icon.js` 生成 `build/pigeon.ico`（16-256 七档尺寸、透明圆角）和 `renderer/pigeon-icon.png`（应用内品牌图），打包时 `--icon=build/pigeon.ico` 写入 exe。
+删除模型后，AI 识图、自动打标和语义搜索将不可用；本地导入、浏览、文件夹、已有标签、评分和普通关键词搜索仍可使用。需要恢复 AI 功能时，将相应模型文件放回原目录，再启用 AI。
 
-把 Eagle 库迁移成 Pigeon 库（命令行方式，应用内也可以）：
+**请只删除模型，不要删除 `data/libraries/` 中的个人资料库。** 源码运行时，模型通常位于 Electron 用户数据目录的 `models/` 子目录；代码还兼容桌面 `Pigeon/data/models/` 路径。
 
-```bash
-node scripts/migrate-eagle.js "E:\eagel资源库\素材.library" "C:\Users\MECH\Documents\Pigeon\素材.pigeon"
-```
+本仓库不包含模型权重。
 
-## 已复刻的功能
+## Windows 便携版
 
-| 模块 | 内容 |
-|---|---|
-| 资料库 | `.pigeon` 开放格式（与 Eagle `.library` 同构）、**多库切换**（点标题栏库名）、Eagle 库一键导入（复制模式，不碰原库） |
-| 组织 | 文件夹树（嵌套、增删改名）、**文件与文件夹多对多**、标签、评分、注释、来源 URL、星标、**智能文件夹**（保存筛选条件） |
-| **网络收集** | **URL 导入**（粘贴网页链接 → 提取全部图片 → 勾选批量入库，自动滚动加载懒加载图）、**从浏览器拖图进窗口**、**粘贴链接直接抓取**（Ctrl+V 识别 URL/HTML）、**内置浏览器**（右键「保存此图片到 Pigeon」） |
-| 视图 | 瀑布流 / 网格 / 列表、缩放滑杆、全部/未分类/未标签/最近添加/随机/回收站、**灰度模式** |
-| 浏览 | 悬停文件名、视频悬停播放、双击大图预览（缩放/平移/切换）、**幻灯片放映**、**字体文件预览**（ttf/otf 真实渲染字样） |
-| 搜索 | 关键词（名称/标签/注释/URL）+ **拼音全拼/首字母搜索** |
-| 筛选 | 格式、形状、评分、日期、标签、**颜色**（调色板色距匹配）；条件可保存为智能文件夹 |
-| 整理 | 多选、拖拽归档、批量标签/评分、**批量重命名**（{name}/{n}/{date} 变量）、**重复文件扫描**（MD5 相同 + pHash 相似，元数据合并后移入回收站）、**库内以图找图**（pHash 汉明距离） |
-| 导入 | 拖放、对话框、剪贴板图片 |
-| Inspector | 缩略图、重命名（磁盘文件同步改名）、评分、标签、文件夹归属、注释、尺寸/大小/日期、来源链接、调色板、**EXIF 拍摄参数**（相机/焦距/光圈/快门/ISO） |
-| 导出 | **导出到文件夹**、**导出 CSV**（带 BOM，Excel 直开）、复制路径/文件名/链接 |
-| 快捷键 | Ctrl+F 搜索 / Ctrl+V 粘贴导入 / Ctrl+U URL 导入 / Ctrl+T 标签 / Delete 删除 / F2 重命名 / F5 刷新 / 空格预览 / Esc 关闭 / Alt+1~3 布局 |
-| 其它 | 深色主题（#1F2023）、无边框窗口、自定义右键菜单 |
+已有 Windows 成品时，双击 `pigeon.exe` 启动，无需安装 Node.js。
 
-## 与 Eagle 相比还没有的
-
-[AUDIT.md](AUDIT.md) 和 [ROADMAP.md](ROADMAP.md) 保留早期开发记录，其中的版本与完成状态可能落后于当前代码。功能状态补充：
-
-- **浏览器扩展**（整页勾选抓取）：需要单独开发 Chrome 扩展，下一阶段最优先
-- **截图收集**（区域框选）：已有实验功能，可在设置中启用
-- **PSD/AI/Office 专业格式预览**：需要各格式解析库
-- **AI 语义搜索 / 自动打标**：已有本地 Chinese-CLIP ONNX 实现，需另行准备模型权重
-- 动作（Actions 宏）、标签群组 UI、自动导入文件夹监听
-
-## 架构（给后续开发）
-
-```
+```text
 Pigeon/
-├── main.js            # Electron 主进程：窗口、Pigeon:// 协议（带 Range 的视频流）、IPC
-├── preload.js         # contextBridge 安全暴露 API（window.pigeon）
-├── lib/library.js     # 资料库核心（纯 Node，可脱离 Electron 测试）
-├── scripts/migrate-eagle.js  # Eagle → Pigeon 迁移
-└── renderer/          # 原生 HTML/CSS/JS，无框架无构建步骤
+├── pigeon.exe
+├── resources/
+└── data/
+    ├── userdata/     # 用户配置和缓存
+    ├── libraries/    # 个人资料库
+    └── models/       # 可选的本地 AI 模型
 ```
 
-数据格式（与 Eagle 同构，条目多对多挂在文件夹上）：
+整体移动便携版文件夹即可迁移程序和数据；更新程序时请保留 `data/`。本仓库当前提供源码，不包含 Windows 成品、个人素材、配置或缓存。
 
+## 从源码运行
+
+准备 Node.js 和 npm，然后执行：
+
+```bash
+git clone https://github.com/Semyon11275/pigeon_tool.git
+cd pigeon_tool
+npm install
+npm start
 ```
-<库名>.pigeon/
-├── metadata.json          # folders 树 / smartFolders / tagsGroups
-└── images/<12位ID>.info/
-    ├── metadata.json      # id/name/ext/size/tags/folders/rating/annotation/url/palettes...
-    ├── 原文件
-    └── thumbnail.png      # 统一缩略图名（Eagle 是 <name>_thumbnail.png）
+
+技术栈：Electron 33、原生 HTML / CSS / JavaScript、JSON 资料库存储、ONNX Runtime。
+
+Eagle 资料库可通过界面导入，也可使用命令行：
+
+```bash
+node scripts/migrate-eagle.js "E:/素材/原始.library" "E:/素材/新资料库.pigeon"
 ```
 
-设计决定：
-- **缩略图协议**：`Pigeon://item/<id>/<file>` 自定义协议流式返回，支持 HTTP Range（视频可拖进度条）
-- **纯 JSON 存储**：与 Eagle 一致，几百条以内性能足够；上万条时再换 SQLite（接口已隔离在 lib/library.js）
-- **导入即复制**：绝不写用户的 Eagle 原库，避免双开软件时互相覆盖元数据
-- **无框架**：当前规模 vanilla JS 足够，UI 复杂到一定程度再考虑引入
+迁移采用复制方式，保留原始资料库。
 
-## 评估清单（给作者本人）
+## 开发与打包
 
-打开后建议按这个顺序玩：
+```text
+main.js                     Electron 主进程、窗口、协议与 IPC
+preload.js                  渲染器 API 桥接
+lib/library.js              资料库管理
+lib/ai.js                   本地 AI 推理
+renderer/                   界面、样式和静态资源
+scripts/migrate-eagle.js     Eagle 资料库迁移
+scripts/make-icon.js         图标生成
+scripts/build.sh             原始 asar 打包脚本
+scripts/assemble-release.sh  原始 Windows 发行目录组装脚本
+```
 
-1. 左侧栏切换 全部 / 未分类 / 回收站，感受文件夹计数
-2. 缩放滑杆拖一拖，切换 瀑布流 / 网格 / 列表（Alt+1/2/3）
-3. 点选条目 → 右侧 Inspector 改名、加标签、评分
-4. 双击大图 → 滚轮缩放、左右箭头切换、底部评分
-5. 拖一个条目到左侧「书籍排版」文件夹上 → 归档
-6. 拖几张新图进窗口 → 自动导入 + 生成缩略图和调色板
-7. Ctrl+V 截个图试试剪贴板导入
-8. 搜索框输入关键词、点「筛选」按格式/形状/日期过滤
-9. Delete 删几个 → 去回收站还原
+打包脚本使用 Git Bash，依赖已安装的依赖、准备好的 Electron 发行目录及本地模型路径。组装脚本保留了开发时的机器路径，运行前需要调整，不是开箱即用的构建流程。
 
-## 源码归档说明
+PowerShell 下运行截图自检：
 
-- 保留原始 Git 提交历史，并从 v0.8.0 demo fix3 成品恢复了 `main.js`、`renderer/app.js` 的后续修复。
-- 不包含个人资料库、用户配置、缓存、AI 模型权重、依赖目录及 Windows 成品。
-- AI 功能需要 `visual.onnx`、`text.onnx` 和 `vocab.txt`；请通过应用设置查看模型目录。缺少模型时不具备完整 AI 功能。
-- `scripts/build.sh` 与 `scripts/assemble-release.sh` 从成品恢复，是原作者使用的 Git Bash 打包脚本。组装脚本依赖已有 Electron 发行目录及作者机器上的模型路径，使用前需按本机环境调整；不属于开箱即用的跨平台构建流程。
-- `npm run shot` 依赖当前尚未声明的 `cross-env`。Windows PowerShell 可使用 `$env:PIGEON_SHOT='1'; npm start`。
-- 本次归档执行了 JavaScript 语法检查，未进行完整 GUI 回归或重新打包验证。
+```powershell
+$env:PIGEON_SHOT='1'
+npm start
+```
+
+`npm run shot` 当前依赖尚未声明的 `cross-env`，可使用上述命令替代。
+
+## 版本与测试状态
+
+- 保留原始 Git 历史，并同步了 2026-09-20 Windows 成品中 v0.8.0 demo fix3 的首次启动建库修复。
+- 本次源码整理已通过 JavaScript 语法检查，尚未执行完整 GUI 回归或重新打包验证。
+- [AUDIT.md](AUDIT.md)、[ROADMAP.md](ROADMAP.md) 和 `docs/` 保留早期开发记录，其中的版本与完成状态可能落后于当前代码。
+- PSD / AI / Office 等专业格式预览、浏览器扩展等功能仍待完善。
