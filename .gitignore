@@ -5,3 +5,18 @@ _stage/
 *.log
 app.asar
 app.asar.unpacked/
+
+# Local data, credentials, models and generated packages
+data/
+userdata/
+models/
+*.pigeon/
+*.library/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+_newapp.asar
+_newapp.asar.unpacked/
+dist/

@@ -1749,8 +1749,8 @@ async function renderWelcome() {
       <p>一个为自己打造的素材收集与管理工具。兼容 Eagle 资料库格式，可以直接导入现有的 .library 继续使用。</p>
       <div class="btns">
         <button class="primary" id="wl-import">导入 Eagle 资料库（.library）</button>
-        <button id="wl-open">打开 Pigeon 资料库（.pigeon）</button>
-        <button id="wl-create">新建空资料库</button>
+        <button id="wl-open">打开已有资料库（.pigeon）</button>
+        <button id="wl-create">新建资料库（自动存放在程序目录）</button>
       </div>
       <div class="status" id="wl-status"></div>
     </div>`;
@@ -1773,7 +1773,10 @@ async function renderWelcome() {
     try { await openLibrary(dir); } catch (e) { status('打开失败：' + e.message); }
   };
   $('#wl-create').onclick = async () => {
-    try { await openLibrary(await api.library.create('未命名')); } catch (e) { status(e.message); }
+    try {
+      const r = await api.library.create('我的资料库');
+      await openLibrary(r.root);
+    } catch (e) { console.error('[pigeon] wl-create失败', e); status('失败：' + e.message); }
   };
 }
 async function openLibrary(root) {

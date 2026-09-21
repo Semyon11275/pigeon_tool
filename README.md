@@ -3,13 +3,13 @@
 一个为自己打造的素材收集与管理工具，复刻 [Eagle](https://eagle.cool) 的核心体验。
 **兼容 Eagle 资料库格式**，可以直接导入现有的 `.library` 继续用。
 
-> 这是给作者本人评估用的第一版原型（v0.1），目标是先跑通"浏览 → 整理 → 查找"的核心循环。
+> 当前归档版本为 **v0.8.0 demo（fix3）**。源码已与 2026-09-20 的 Windows 成品对齐，包含首次启动新建资料库的修复。
 
 ![技术栈](https://img.shields.io/badge/Electron-33-blue) ![平台](https://img.shields.io/badge/Windows-x64-green)
 
 ## 便携版（绿色版）
 
-桌面的 `Pigeon` 文件夹即为便携版，结构：
+Windows 成品的 `Pigeon` 文件夹即为便携版（本仓库仅包含源码），结构：
 
 ```
 Pigeon\                       ← 整个文件夹可随意移动 / 拷进 U 盘
@@ -65,12 +65,12 @@ node scripts/migrate-eagle.js "E:\eagel资源库\素材.library" "C:\Users\MECH\
 
 ## 与 Eagle 相比还没有的
 
-见 [AUDIT.md](AUDIT.md) —— 完整的逐项排查表（约 60 项功能，v0.2 覆盖约 70%）。剩余主要差距：
+[AUDIT.md](AUDIT.md) 和 [ROADMAP.md](ROADMAP.md) 保留早期开发记录，其中的版本与完成状态可能落后于当前代码。功能状态补充：
 
 - **浏览器扩展**（整页勾选抓取）：需要单独开发 Chrome 扩展，下一阶段最优先
-- **截图收集**（区域框选）：需要框选 UI
+- **截图收集**（区域框选）：已有实验功能，可在设置中启用
 - **PSD/AI/Office 专业格式预览**：需要各格式解析库
-- **AI 语义搜索**：需要本地 CLIP 或在线 API，单独立项
+- **AI 语义搜索 / 自动打标**：已有本地 Chinese-CLIP ONNX 实现，需另行准备模型权重
 - 动作（Actions 宏）、标签群组 UI、自动导入文件夹监听
 
 ## 架构（给后续开发）
@@ -114,3 +114,12 @@ Pigeon/
 7. Ctrl+V 截个图试试剪贴板导入
 8. 搜索框输入关键词、点「筛选」按格式/形状/日期过滤
 9. Delete 删几个 → 去回收站还原
+
+## 源码归档说明
+
+- 保留原始 Git 提交历史，并从 v0.8.0 demo fix3 成品恢复了 `main.js`、`renderer/app.js` 的后续修复。
+- 不包含个人资料库、用户配置、缓存、AI 模型权重、依赖目录及 Windows 成品。
+- AI 功能需要 `visual.onnx`、`text.onnx` 和 `vocab.txt`；请通过应用设置查看模型目录。缺少模型时不具备完整 AI 功能。
+- `scripts/build.sh` 与 `scripts/assemble-release.sh` 从成品恢复，是原作者使用的 Git Bash 打包脚本。组装脚本依赖已有 Electron 发行目录及作者机器上的模型路径，使用前需按本机环境调整；不属于开箱即用的跨平台构建流程。
+- `npm run shot` 依赖当前尚未声明的 `cross-env`。Windows PowerShell 可使用 `$env:PIGEON_SHOT='1'; npm start`。
+- 本次归档执行了 JavaScript 语法检查，未进行完整 GUI 回归或重新打包验证。

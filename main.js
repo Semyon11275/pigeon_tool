@@ -578,13 +578,22 @@ function registerIpc() {
     return meta;
   });
   handle('library:create', async (name) => {
-    const dir = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'] });
-    if (dir.canceled || !dir.filePaths[0]) throw new Error('已取消');
-    const root = path.join(dir.filePaths[0], (name || '未命名') + '.pigeon');
+    // 便携版：资料库自动建到程序旁 data/libraries，用户零操作上手
+    let root;
+    if (isPortable) {
+      const safe = (name || '我的资料库').replace(/[\/:*?"<>|]/g, '_');
+      root = path.join(portableLibrariesDir(), safe + '.pigeon');
+      let n = 2;
+      while (fs.existsSync(root)) root = path.join(portableLibrariesDir(), `${safe} ${n++}.pigeon`);
+    } else {
+      const dir = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'] });
+      if (dir.canceled || !dir.filePaths[0]) throw new Error('已取消');
+      root = path.join(dir.filePaths[0], (name || '未命名') + '.pigeon');
+    }
     const meta = await lib.createLibrary(root, name);
     currentLibraryRoot = () => root;
     await rememberLibrary(root);
-    return meta;
+    return { root, meta };
   });
   handle('library:importEagle', async (srcRoot, destDir, name) => {
     if (!(await fs.pathExists(srcRoot)) || !(await fs.pathExists(path.join(srcRoot, 'metadata.json')))) {
@@ -1199,6 +1208,31 @@ async function funcTest() {
   // 壁纸断言：默认开启 + 背景图已设置
   const wpState = await win.webContents.executeJavaScript(`({ cls: document.body.classList.contains('wallpaper-on'), bg: (document.getElementById('wallpaper').style.backgroundImage || '').slice(0, 50) })`);
   results.wallpaperOn = wpState.cls === true && wpState.bg.length > 0;
+
+  // 首次启动：真实走渲染器「新建资料库」API（便携版自动落位 data/libraries）
+  if (isPortable) {
+    const cr = await win.webContents.executeJavaScript(`
+      window.pigeon.library.create('首启建库测试').then(r => ({ root: r.root, name: r.meta.name }))
+    `);
+    results.firstRunCreate = !!cr.root && fs.existsSync(path.join(cr.root, 'metadata.json'));
+    await fs.remove(cr.root);
+  } else {
+    results.firstRunCreate = 'skipped (dev)';
+  }
+
+  // 首启真实流程：全新配置下点击「新建资料库」（必须在其他测试污染前跑）
+  if (isPortable) {
+    const fr = await win.webContents.executeJavaScript(`(async () => {
+      document.getElementById('wl-create').click();
+      await new Promise(r => setTimeout(r, 3000));
+      return {
+        welcomeHidden: document.getElementById('welcome').classList.contains('hidden'),
+        statusText: (document.getElementById('wl-status') || {}).textContent || '',
+        libName: document.getElementById('library-name').textContent,
+      };
+    })()`);
+    results.firstRunFlow = fr;
+  }
 
   console.log('[pigeon] FUNC_TEST ' + JSON.stringify(results));
   await fs.remove(root);
