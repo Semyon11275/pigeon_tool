@@ -1,7 +1,7 @@
 {
   "name": "pigeon",
   "productName": "Pigeon",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Pigeon — 一个为自己打造的素材收集与管理工具（Eagle 复刻练习）",
   "main": "main.js",
   "scripts": {
@@ -14,7 +14,9 @@
     "build:win": "node scripts/build-win.cjs",
     "test:setup": "node scripts/test-library-setup.js",
     "test:clipboard": "node scripts/test-clipboard.js",
-    "test:github": "node scripts/test-github-update.cjs"
+    "test:github": "node scripts/test-github-update.cjs",
+    "test:review": "node scripts/test-review.js",
+    "test:review-ui": "electron scripts/test-review-ui.cjs"
   },
   "devDependencies": {
     "@electron/asar": "4.3.1",

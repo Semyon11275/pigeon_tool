@@ -2,13 +2,13 @@
 
 收集图片、整理灵感
 
-Pigeon 是一款 Windows 素材管理工具，支持导入 Eagle 资料库。当前版本 **0.9.3**，浏览器扩展 **0.2.0**。软件还在持续完善，重要素材请备份。
+Pigeon 是一款 Windows 素材管理工具，支持导入 Eagle 资料库。当前版本 **0.9.4**，浏览器扩展 **0.2.0**。软件还在持续完善，重要素材请备份。
 
 ## 下载和使用
 
 到 [Releases](https://github.com/Semyon11275/pigeon_tool/releases) 下载：
 
-- **Pigeon-0.9.3-win-x64.zip**：Windows x64 便携版。完整解压后打开 `Pigeon.exe`
+- **Pigeon-0.9.4-win-x64.zip**：Windows x64 便携版。完整解压后打开 `Pigeon.exe`
 - **Pigeon-extension-0.2.0.zip**：Chrome / Edge 扩展，单独安装。解压后进入浏览器扩展管理页，打开开发者模式，选择“加载已解压的扩展程序”。还没有上架扩展商店，得自行安装orz。
 - **SHA256SUMS.txt**：下载文件校验值。
 
@@ -55,8 +55,8 @@ Windows x64，Node.js 22.12 或以上：
 ```powershell
 npm ci
 npm start
-npm run build:win -- --output E:\builds\Pigeon-0.9.3
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-update.ps1 -SourceDir E:\builds\Pigeon-0.9.3\dist -OutputDir E:\packages\Pigeon-0.9.3 -Version 0.9.3
+npm run build:win -- --output E:\builds\Pigeon-0.9.4
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-update.ps1 -SourceDir E:\builds\Pigeon-0.9.4\dist -OutputDir E:\packages\Pigeon-0.9.4 -Version 0.9.4
 ```
 
 构建输出必须是新目录。发行包不带个人资料库、配置、缓存和模型。Electron 固定为 44.9.0，构建会写入鸽子图标和应用版本。

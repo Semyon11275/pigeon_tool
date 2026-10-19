@@ -1033,13 +1033,15 @@ function showMenu(x, y, entries) {
   for (const e of entries) {
     if (e.sep) { menu.appendChild(el('div', 'sep')); continue; }
     const mi = el('div', 'mi' + (e.danger ? ' danger' : '') + (e.disabled ? ' disabled' : ''));
-    mi.innerHTML = `${e.label}${e.shortcut ? `<span class="sc">${e.shortcut}</span>` : '<span class="arrow">›</span>'}`;
+    mi.innerHTML = `${e.label}${e.shortcut ? `<span class="sc">${e.shortcut}</span>` : e.sub ? '<span class="arrow">›</span>' : ''}`;
     if (e.action) mi.onclick = () => { hideMenu(); e.action(); };
+    mi.onmouseenter = () => $$('#menu-layer .submenu').forEach(s => s.remove());
     if (e.sub) {
       mi.onmouseenter = () => {
         $$('#menu-layer .submenu').forEach(s => s.remove());
         const sub = el('div', 'menu submenu');
         const r = mi.getBoundingClientRect();
+        const parentRect = menu.getBoundingClientRect();
         sub.style.left = (r.right + 4) + 'px';
         sub.style.top = r.top + 'px';
         for (const se of e.sub) {
@@ -1049,12 +1051,13 @@ function showMenu(x, y, entries) {
           sub.appendChild(smi);
         }
         layer.appendChild(sub);
-        sub.style.left = Math.max(8, Math.min(r.right + 4, window.innerWidth - sub.offsetWidth - 8)) + 'px';
+        sub.style.left = Math.max(8, Math.min(parentRect.right + 4 + sub.offsetWidth <= window.innerWidth - 8 ? parentRect.right + 4 : parentRect.left - sub.offsetWidth - 4, window.innerWidth - sub.offsetWidth - 8)) + 'px';
         sub.style.top = Math.max(8, Math.min(r.top, window.innerHeight - sub.offsetHeight - 8)) + 'px';
       };
     }
     menu.appendChild(mi);
   }
+  menu.onscroll = () => $$('#menu-layer .submenu').forEach(s => s.remove());
   layer.appendChild(menu);
   const mw = menu.offsetWidth, mh = menu.offsetHeight;
   menu.style.left = Math.max(8, Math.min(x, window.innerWidth - mw - 8)) + 'px';

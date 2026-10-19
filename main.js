@@ -612,22 +612,19 @@ function attachItemProtocolHandler() {
         return new Response(body, { headers: { 'Content-Type': MIME[files[0].split('.').pop().toLowerCase()] || 'image/jpeg', 'Access-Control-Allow-Origin': '*' } });
       }
       if (u.host !== 'item') return new Response('bad request', { status: 400 });
-      const parts = u.pathname.split('/').filter(Boolean).map(s => { try { return decodeURIComponent(s); } catch (e) { return s; } });
-      if (parts.length < 2) return new Response('bad request', { status: 400 });
       const root = currentLibraryRoot();
       if (!root) return new Response('no library', { status: 404 });
-      const file = path.join(lib.imagesDir(root), parts[0] + '.info', parts.slice(1).join('/'));
-      if (!(await fs.pathExists(file))) return new Response('not found', { status: 404 });
+      const file = await require('./lib/media-access').resolveItemFile(root, u.pathname);
       const stat = await fs.stat(file);
-      const mime = MIME[parts[parts.length - 1].split('.').pop().toLowerCase()] || 'application/octet-stream';
+      if (!stat.isFile()) return new Response('not found', { status: 404 });
+      const mime = MIME[path.extname(file).slice(1).toLowerCase()] || 'application/octet-stream';
       // Range 支持（视频拖动进度条必需）
       const range = request.headers.get('Range');
       if (range) {
-        const m = /bytes=(\d*)-(\d*)/.exec(range);
-        let start = m && m[1] ? parseInt(m[1], 10) : 0;
-        let end = m && m[2] ? parseInt(m[2], 10) : stat.size - 1;
-        if (isNaN(start) || start >= stat.size) start = 0;
-        if (isNaN(end) || end >= stat.size) end = stat.size - 1;
+        let parsed;
+        try { parsed = require('./lib/media-access').parseRange(range, stat.size); }
+        catch { return new Response(null, {status:416,headers:{'Content-Range':'bytes */'+stat.size,'Access-Control-Allow-Origin':'*'}}); }
+        const {start,end} = parsed;
         const stream = fs.createReadStream(file, { start, end });
         const body = require('stream').Readable.toWeb(stream);
         return new Response(body, {
@@ -648,7 +645,7 @@ function attachItemProtocolHandler() {
         headers: { 'Content-Type': mime, 'Content-Length': String(stat.size), 'Accept-Ranges': 'bytes', 'Access-Control-Allow-Origin': '*' },
       });
     } catch (e) {
-      return new Response('error: ' + e.message, { status: 500 });
+      return new Response('media unavailable', { status: e.status || (e.code === 'ENOENT' ? 404 : 500) });
     }
   });
 }
