@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <!-- 顶部：状态 + 设置入口 -->
+  <header>
+    <span class="logo">🕊️ Pigeon</span>
+    <span id="conn" class="conn unknown">● 检测中</span>
+    <button id="btn-gear" title="扩展设置">⚙</button>
+  </header>
+
+  <!-- 设置视图 -->
+  <section id="view-settings" class="hidden">
+    <p class="tip">把 Pigeon 桌面端「设置 → 浏览器扩展收集」里的<b>配对码</b>粘贴到这里：</p>
+    <textarea id="inp-token" rows="2" placeholder="粘贴配对码（长按复制按钮复制的那串）"></textarea>
+    <div class="row">
+      <label>端口 <input id="inp-port" type="number" min="1024" max="65535" value="39770"></label>
+      <button id="btn-save-cfg" class="primary">保存并测试连接</button>
+    </div>
+    <div id="cfg-msg" class="msg"></div>
+  </section>
+
+  <!-- 主视图 -->
+  <section id="view-main">
+    <div id="page-info" class="page-info">正在扫描当前页面...</div>
+
+    <div class="toolbar"><button id="btn-window">独立采集窗口</button><button id="btn-rescan">重新扫描</button></div>
+    <div class="toolbar"><label><input type="checkbox" id="watch">边浏览边检测</label><label><input type="checkbox" id="auto-new">自动选择新增匹配项</label></div>
+    <div class="toolbar"><select id="scope"><option value="all">页面全部图片</option><option id="scope-project" value="project">当前作品图片</option></select>
+    <select id="format-filter"><option value="">全部格式</option><option value="jpeg">JPEG</option><option value="png">PNG</option><option value="webp">WebP</option><option value="gif">GIF</option><option value="avif">AVIF</option></select>
+    <select id="ratio-filter"><option value="">全部比例</option><option value="wide">横图</option><option value="tall">竖图</option><option value="square">近方形</option></select></div>
+    <div class="toolbar">
+      <select id="size-filter" title="按图片尺寸筛选">
+        <option value="0">全部尺寸</option>
+        <option value="400">≥ 400px</option>
+        <option value="800">≥ 800px</option>
+        <option value="1200">≥ 1200px</option>
+      </select>
+      <label class="chk"><input type="checkbox" id="sel-all" checked> 选择当前筛选结果</label>
+      <button id="btn-clear">清空选择</button><span id="pick-count" class="count">0</span>
+    </div>
+
+    <label><input type="checkbox" id="unknown-only">仅看尺寸未知</label><p class="tip">双击图片预览。关闭采集窗口不会停止网页检测；请取消“边浏览边检测”以停止。</p>
+    <div id="grid" class="grid"></div>
+    <div id="no-img" class="empty hidden">这个页面上没有发现可收藏的图片</div>
+
+    <div class="form"><label><input type="checkbox" id="browser-download">由浏览器下载（适用于登录页，单张 ≤12MB）</label>
+      <select id="folder"><option value="">不放入文件夹（未分类）</option></select>
+      <input id="tags" type="text" placeholder="标签，逗号分隔（可选）">
+      <button id="btn-save" class="primary" disabled>收藏到 Pigeon</button>
+    </div>
+
+    <div id="result" class="msg"></div><button id="retry-failed" hidden>仅选择失败项以重试</button>
+  </section>
+
+  <dialog id="preview-dialog"><button id="preview-close">关闭</button><img id="image-preview" alt="图片预览"></dialog>
+  <script src="../common.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

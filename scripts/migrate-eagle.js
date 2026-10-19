@@ -5,7 +5,8 @@ const path = require('path');
 const lib = require('../lib/library');
 
 async function main() {
-  const src = process.argv[2] || 'E:\\eagel资源库\\素材.library';
+  const src = process.argv[2];
+  if (!src) throw new Error('用法：node scripts/migrate-eagle.js <Eagle 资料库路径> [目标路径]');
   const dest = process.argv[3] || path.join(require('os').homedir(), 'Documents', 'Pigeon', '素材.pigeon');
   console.log('Eagle 库 :', src);
   console.log('Pigeon 库 :', dest);

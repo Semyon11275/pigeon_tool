@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('pigeon', {
   },
   library: {
     open: (root) => call('library:open', root),
-    create: (name) => call('library:create', name),
+    create: (name, options) => call('library:create', name, options),
     importEagle: (src, destDir, name) => call('library:importEagle', src, destDir, name),
     meta: () => call('library:meta'),
     listKnown: () => call('library:listKnown'),
@@ -31,16 +31,33 @@ contextBridge.exposeInMainWorld('pigeon', {
   },
   items: {
     list: () => call('items:list'),
-    update: (id, patch) => call('item:update', id, patch),
+    update: (id, patch, rootOverride) => call('item:update', id, patch, rootOverride),
+    readIn: (root, id) => call('item:readIn', root, id),
     trash: (ids, deleted) => call('item:trash', ids, deleted),
     deletePermanent: (ids) => call('item:deletePermanent', ids),
     saveThumbnail: (id, buf) => call('item:saveThumbnail', id, buf),
     exportTo: (ids) => call('item:exportTo', ids),
+    dragOut: (ids) => ipcRenderer.send('item:dragOut', ids),
+  },
+  bridge: {
+    info: () => call('bridge:info'),
   },
   folders: {
     add: (name, parentId) => call('folder:add', name, parentId),
     rename: (id, name) => call('folder:rename', id, name),
     remove: (id) => call('folder:remove', id),
+    setDefaultTags: (id, tags) => call('folder:setDefaultTags', id, tags),
+    defaultTagsOf: (id) => call('folder:defaultTagsOf', id),
+  },
+  tags: {
+    rename: (oldTag, newTag) => call('tags:rename', oldTag, newTag),
+    merge: (sources, target) => call('tags:merge', sources, target),
+    delete: (tag) => call('tags:delete', tag),
+    setGroups: (groups) => call('library:setTagsGroups', groups),
+  },
+  exportFiles: {
+    pickDir: () => call('dialog:pickExportDir'),
+    write: (dir, name, buf) => call('item:writeExportFile', dir, name, buf),
   },
   import: {
     files: (paths, folderIds) => call('import:files', paths, folderIds),
@@ -71,6 +88,7 @@ contextBridge.exposeInMainWorld('pigeon', {
   },
   settings: {
     get: () => call('settings:get'),
+    hotkeyStatus: () => call('settings:hotkeyStatus'),
     set: (patch) => call('settings:set', patch),
     modelsDir: () => call('settings:modelsDir'),
     openModelsDir: () => call('settings:openModelsDir'),
@@ -79,9 +97,15 @@ contextBridge.exposeInMainWorld('pigeon', {
   wallpaper: {
     pickImage: () => call('wallpaper:pickImage'),
   },
+  updates: {
+    status: () => call('updates:status'), check: () => call('updates:check'),
+    download: () => call('updates:download'), install: () => call('updates:install'),
+    onState: cb => ipcRenderer.on('pigeon:update', (_e,st) => cb(st)),
+  },
   appVersion: () => call('app:version'),
   onImported: (cb) => ipcRenderer.on('pigeon:imported', (_e, items) => cb(items)),
   onAiProgress: (cb) => ipcRenderer.on('pigeon:ai-progress', (_e, p) => cb(p)),
+  onDragOutResult: (cb) => ipcRenderer.on('pigeon:dragOutResult', (_e, r) => cb(r)),
   ai: {
     search: (query, topN) => call('ai:semanticSearch', query, topN),
     embedMissing: () => call('ai:embedMissing'),

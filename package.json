@@ -1,16 +1,26 @@
 {
   "name": "pigeon",
   "productName": "Pigeon",
-  "version": "0.8.0",
+  "version": "0.9.3",
   "description": "Pigeon — 一个为自己打造的素材收集与管理工具（Eagle 复刻练习）",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "shot": "cross-env PIGEON_SHOT=1 electron ."
+    "shot": "cross-env PIGEON_SHOT=1 electron .",
+    "test:ext": "node scripts/test-extension.js",
+    "test:concurrency": "node scripts/test-library-concurrency.js",
+    "test:features": "node scripts/test-new-features.js",
+    "test:capture": "node scripts/test-capture-v2.js",
+    "build:win": "node scripts/build-win.cjs",
+    "test:setup": "node scripts/test-library-setup.js",
+    "test:clipboard": "node scripts/test-clipboard.js",
+    "test:github": "node scripts/test-github-update.cjs"
   },
   "devDependencies": {
-    "electron": "^33.0.0",
-    "pngjs": "^7.0.0"
+    "@electron/asar": "4.3.1",
+    "electron": "44.9.0",
+    "pngjs": "^7.0.0",
+    "rcedit": "4.0.1"
   },
   "dependencies": {
     "exif-parser": "^0.1.12",

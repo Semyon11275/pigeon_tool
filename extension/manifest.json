@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Pigeon 素材收集",
+  "version": "0.2.0",
+  "description": "网页图片批量采集：持续检测、作品筛选、稳定选择与浏览器下载。",
+  "minimum_chrome_version": "110",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "activeTab",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Pigeon 素材收集",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

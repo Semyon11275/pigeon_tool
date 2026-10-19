@@ -572,3 +572,24 @@ body.wallpaper-on .item img, body.wallpaper-on .item video { background: rgba(43
 .set-back button:hover { background: var(--bg-active); color: var(--text); }
 
 body.wallpaper-on #welcome { background: rgba(31, 32, 35, .82); }
+
+/* ===== 标签管理（P1-01） ===== */
+.tag-mgr-list { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; margin: 8px 0; }
+.tag-row { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.tag-row:hover { background: var(--bg-hover); }
+.tag-row.sel { background: rgba(74, 125, 255, .18); }
+.tag-row .label { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tag-row .count { color: var(--text-faint); font-size: 11.5px; flex: none; }
+.tag-row .group-badge { font-size: 10.5px; color: var(--text-dim); background: var(--bg-hover); padding: 1px 6px; border-radius: 8px; flex: none; }
+#status-undo { color: var(--text-faint); font-size: 11.5px; }
+
+.shortcut-row { display:flex; align-items:center; gap:10px; margin:8px 0; } .shortcut-row span { flex:1; } .shortcut-row input { width:175px; padding:6px; color:var(--text); background:var(--bg); border:1px solid #666; border-radius:5px; }
+
+#set-shortcuts input:focus { border-color:var(--accent); } #settings-body label { margin-right:14px; } #settings-body input[type="checkbox"] { margin-right:5px; accent-color:var(--accent); } #update-notes:empty { display:none; } #update-status { margin:12px 0; }
+
+/* Long filter menus stay inside the window, including at high display scaling. */
+.menu { box-sizing: border-box; max-height: calc(100vh - 16px); max-width: calc(100vw - 16px); overflow-y: auto; overscroll-behavior: contain; }
+.shortcut-settings > summary { cursor: pointer; padding: 4px 0; }
+.shortcut-settings > summary .set-note { margin-left: 12px; font-weight: normal; }
+.shortcut-settings[open] > summary { margin-bottom: 12px; }
+.shortcut-settings[open] > summary .set-note { display: none; }

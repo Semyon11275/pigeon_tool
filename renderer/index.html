@@ -97,6 +97,7 @@
           </button>
           <span id="status-count"></span>
           <span id="status-sel"></span>
+          <span id="status-undo"></span>
           <div class="sb-spacer"></div>
           <span id="status-lib"></span>
         </div>
@@ -151,7 +152,7 @@
     <!-- 重复扫描 -->
     <div id="dup-modal" class="modal hidden">
       <div class="modal-box wide">
-        <div class="modal-title">扫描重复文件</div>
+        <div class="modal-title">扫描重复文件 <button id="dup-cancel" class="hidden" style="float:right;height:24px;padding:0 10px;font-size:12px;background:var(--bg-hover);color:var(--text-dim);border:none;border-radius:12px;cursor:pointer">取消扫描</button></div>
         <div id="dup-body">
           <div class="dup-modes">
             <button id="dup-mode-same"><b>扫描「相同」文件</b><span>MD5 校验，找出内容完全一致的文件</span></button>
@@ -167,6 +168,27 @@
       </div>
     </div>
 
+    <!-- 标签管理 -->
+    <div id="tag-modal" class="modal hidden">
+      <div class="modal-box wide">
+        <div class="modal-title">标签管理</div>
+        <div class="url-row">
+          <input id="tag-search" placeholder="搜索标签...">
+          <select id="tag-group-filter"><option value="">全部分组</option></select>
+        </div>
+        <div class="url-status" id="tag-status">勾选标签后可合并 / 删除 / 加入群组；重命名单选一个标签</div>
+        <div class="tag-mgr-list" id="tag-list"></div>
+        <div class="modal-btns">
+          <button id="tag-new-group">新建群组</button>
+          <button id="tag-assign-group">加入群组</button>
+          <button id="tag-rename">重命名</button>
+          <button id="tag-merge">合并…</button>
+          <button id="tag-delete" class="danger">删除</button>
+          <button id="tag-close">关闭</button>
+        </div>
+      </div>
+    </div>
+
     <!-- 欢迎页 -->
     <div id="welcome" class="hidden"></div>
 
@@ -175,6 +197,7 @@
     <div id="toast" class="hidden"></div>
   </div>
   <script src="vendor/heic2any.min.js"></script>
+  <script src="../lib/shortcuts.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

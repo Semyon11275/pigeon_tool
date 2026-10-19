@@ -3,11 +3,13 @@ release/
 shots/
 _stage/
 *.log
+data/
+Pigeon-v*-demo-*.zip
+*.pigeon
 app.asar
 app.asar.unpacked/
 
 # Local data, credentials, models and generated packages
-data/
 userdata/
 models/
 *.pigeon/
